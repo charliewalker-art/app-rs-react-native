@@ -1,0 +1,44 @@
+name: Android Build & Release APK
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: # Nécessaire pour créer une release
+      contents: write
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configuration Node & Java
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Installation des dépendances
+        run: npm install
+
+      - name: Build de l'APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      # Cette étape crée la Release sur GitHub avec le numéro de build
+      - name: Création de la Release GitHub
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          name: App Version ${{ github.run_number }}
+          files: android/app/build/outputs/apk/debug/app-debug.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
