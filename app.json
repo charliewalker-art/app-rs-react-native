@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "MonProjet",
+    "name": "Poste Web",
     "slug": "MonProjet",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -40,6 +40,10 @@
         }
       ]
     ],
+      "extra": {
+      "apiUrl": "https://javion-bolometric-verdie.ngrok-free.dev"
+    },
+    
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
