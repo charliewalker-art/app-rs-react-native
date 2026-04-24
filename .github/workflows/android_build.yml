@@ -28,21 +28,20 @@ jobs:
       - name: Installation des dépendances
         run: npm install
 
-      # ÉTAPE CRUCIALE : Cette commande crée le dossier 'android' manquant
       - name: Générer le dossier Android natif
         run: npx expo prebuild --platform android
 
-      - name: Build de l'APK
+      - name: Build de l'APK (Mode Release)
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleRelease
 
       - name: Création de la Release GitHub
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ github.run_number }}
           name: App Version ${{ github.run_number }}
-          files: android/app/build/outputs/apk/debug/app-debug.apk
+          files: android/app/build/outputs/apk/release/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
