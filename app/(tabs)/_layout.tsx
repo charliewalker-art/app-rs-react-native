@@ -5,11 +5,12 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#6366f1",
-        tabBarInactiveTintColor: "#9ca3af",
+        tabBarActiveTintColor: "#3B82F6",
+        tabBarInactiveTintColor: "#6B7280",
         tabBarStyle: {
-          backgroundColor: "#1f2937",
-          borderTopWidth: 0,
+          backgroundColor: "#111827",
+          borderTopWidth: 1,
+          borderTopColor: "#1F2937",
           height: 65,
           paddingBottom: 10,
           paddingTop: 5,
@@ -18,14 +19,47 @@ export default function TabLayout() {
           fontSize: 11,
           fontWeight: "600",
         },
-        headerStyle: { backgroundColor: "#1f2937" },
+        headerStyle: { backgroundColor: "#0A0E1A" },
         headerTintColor: "#ffffff",
         headerTitleStyle: { fontWeight: "bold", fontSize: 18 },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: "Accueil", tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} /> }} />
-      <Tabs.Screen name="apropos" options={{ title: "À Propos", tabBarIcon: ({ color, size }) => <Ionicons name="information-circle" size={size} color={color} /> }} />
-      <Tabs.Screen name="presentation" options={{ title: "Présentation", tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} /> }} />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Dashboard",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="grid-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="domaines"
+        options={{
+          title: "Domaines",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="globe-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="nginx"
+        options={{
+          title: "Nginx",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="server-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="pki"
+        options={{
+          title: "PKI",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="shield-checkmark-outline" size={size} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
