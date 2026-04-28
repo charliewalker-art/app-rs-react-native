@@ -9,26 +9,26 @@ type Props = {
 };
 
 export default function AuthorityCard({ item, onCRL, onDownload }: Props) {
+  const isExpired = item.timeLeft === "Expiré";
   return (
-    <View style={{
-      backgroundColor: "#fff",
-      borderRadius: 10,
-      padding: 15,
-      marginBottom: 12,
-      borderLeftWidth: 4,
-      borderLeftColor: "#6366f1",
-    }}>
-      <Text style={{ fontWeight: "bold", fontSize: 16, color: "#1f2937" }}>{item.name}</Text>
-      <Text style={{ color: "#6b7280", marginTop: 4 }}>Organisation : {item.organization}</Text>
-      <Text style={{ color: "#6b7280" }}>Pays : {item.country} — {item.state}</Text>
-      <Text style={{ color: "#6b7280" }}>Localité : {item.locality}</Text>
-      <Text style={{
-        marginTop: 6,
-        color: item.timeLeft === "Expiré" ? "#ef4444" : "#10b981",
-        fontWeight: "600",
-      }}>
-        ⏱ {item.timeLeft}
+    <View className="bg-gray-800 rounded-2xl p-4 mb-3 border border-gray-700">
+      <View className="flex-row items-center justify-between mb-2">
+        <View className="flex-row items-center gap-2">
+          <Text className="text-white font-bold text-base">🛡 {item.name}</Text>
+        </View>
+        <View className="bg-green-500 px-3 py-1 rounded-full">
+          <Text className="text-white text-xs font-bold">ACTIVE</Text>
+        </View>
+      </View>
+      <Text className="text-gray-400 text-sm mb-1">
+        CN={item.name}, O={item.organization}
       </Text>
+      <View className="flex-row items-center justify-between mt-2">
+        <Text className="text-gray-500 text-sm">Valide jusqu'au:</Text>
+        <Text className={`text-sm font-semibold ${isExpired ? "text-red-400" : "text-gray-300"}`}>
+          {item.timeLeft}
+        </Text>
+      </View>
       <AuthorityActions id={item.id} onCRL={onCRL} onDownload={onDownload} />
     </View>
   );

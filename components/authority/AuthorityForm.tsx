@@ -24,7 +24,7 @@ type Props = {
 const fields = [
   { key: "name", label: "Nom *" },
   { key: "organization", label: "Organisation *" },
-  { key: "country", label: "Pays * (ex: FR)" },
+  { key: "country", label: "Pays * (ex: MG)" },
   { key: "state", label: "État / Région" },
   { key: "locality", label: "Localité" },
   { key: "validityYears", label: "Validité (années)", keyboard: "numeric" },
@@ -37,54 +37,39 @@ export default function AuthorityForm({ visible, form, submitting, onChange, onS
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "flex-end" }}>
-          <View style={{
-            backgroundColor: "#fff",
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            padding: 20,
-            maxHeight: "90%",
-          }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 16, color: "#1f2937" }}>
+        <View className="flex-1 bg-black/60 justify-end">
+          <View className="bg-gray-900 rounded-t-3xl p-6 max-h-[90%]">
+            <Text className="text-white text-xl font-bold mb-5">
               Nouvelle autorité
             </Text>
-
             <ScrollView showsVerticalScrollIndicator={false}>
               {fields.map((field) => (
-                <View key={field.key} style={{ marginBottom: 12 }}>
-                  <Text style={{ color: "#6b7280", fontSize: 12, marginBottom: 4 }}>{field.label}</Text>
+                <View key={field.key} className="mb-4">
+                  <Text className="text-gray-400 text-xs mb-1">{field.label}</Text>
                   <TextInput
                     value={form[field.key as keyof FormData]}
                     onChangeText={(val) => onChange(field.key as keyof FormData, val)}
                     keyboardType={field.keyboard as any ?? "default"}
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "#e5e7eb",
-                      borderRadius: 8,
-                      padding: 10,
-                      fontSize: 14,
-                      color: "#1f2937",
-                    }}
+                    className="bg-gray-800 text-white rounded-xl px-4 py-3 text-sm border border-gray-700"
+                    placeholderTextColor="#6b7280"
                   />
                 </View>
               ))}
-
-              <View style={{ flexDirection: "row", gap: 10, marginTop: 8, marginBottom: 20 }}>
+              <View className="flex-row gap-3 mt-2 mb-6">
                 <TouchableOpacity
                   onPress={onCancel}
-                  style={{ flex: 1, padding: 14, borderRadius: 10, borderWidth: 1, borderColor: "#e5e7eb", alignItems: "center" }}
+                  className="flex-1 py-4 rounded-2xl border border-gray-700 items-center"
                 >
-                  <Text style={{ color: "#6b7280" }}>Annuler</Text>
+                  <Text className="text-gray-400 font-semibold">Annuler</Text>
                 </TouchableOpacity>
-
                 <TouchableOpacity
                   onPress={onSubmit}
                   disabled={submitting}
-                  style={{ flex: 1, backgroundColor: "#6366f1", padding: 14, borderRadius: 10, alignItems: "center" }}
+                  className="flex-1 bg-blue-600 py-4 rounded-2xl items-center"
                 >
                   {submitting
                     ? <ActivityIndicator color="#fff" />
-                    : <Text style={{ color: "#fff", fontWeight: "bold" }}>Générer</Text>
+                    : <Text className="text-white font-bold">Générer</Text>
                   }
                 </TouchableOpacity>
               </View>

@@ -8,19 +8,18 @@ type Props = {
 
 export default function AuthorityActions({ id, onCRL, onDownload }: Props) {
   return (
-    <View style={{ flexDirection: "row", gap: 8, marginTop: 10 }}>
+    <View className="flex-row gap-2 mt-3">
       <TouchableOpacity
         onPress={() => onCRL(id)}
-        style={{ backgroundColor: "#f59e0b", padding: 8, borderRadius: 6, flex: 1, alignItems: "center" }}
+        className="flex-1 bg-amber-500 py-2 rounded-xl items-center"
       >
-        <Text style={{ color: "#fff", fontSize: 12, fontWeight: "600" }}>Mettre à jour CRL</Text>
+        <Text className="text-white text-xs font-bold">Mettre à jour CRL</Text>
       </TouchableOpacity>
-
       <TouchableOpacity
         onPress={() => onDownload(id)}
-        style={{ backgroundColor: "#10b981", padding: 8, borderRadius: 6, flex: 1, alignItems: "center" }}
+        className="flex-1 bg-emerald-500 py-2 rounded-xl items-center"
       >
-        <Text style={{ color: "#fff", fontSize: 12, fontWeight: "600" }}>Télécharger cert</Text>
+        <Text className="text-white text-xs font-bold">Télécharger cert</Text>
       </TouchableOpacity>
     </View>
   );
