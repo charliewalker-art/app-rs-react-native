@@ -40,7 +40,7 @@ export default function Domaines() {
     setSubmitting(true);
     try {
       await ajouterDomaine(nom, adresseIp);
-      Toast.show({ type: "success", text1: "Succès", text2: "Domaine ajouté !" });
+      Toast.show({ type: "success", text1: "Succes", text2: "Domaine ajoute" });
       setShowForm(false);
       setNom("");
       setAdresseIp("");
@@ -57,7 +57,7 @@ export default function Domaines() {
     setSubmitting(true);
     try {
       await modifierDomaine(editDomaine.id, adresseIp);
-      Toast.show({ type: "success", text1: "Succès", text2: "Domaine modifié !" });
+      Toast.show({ type: "success", text1: "Succes", text2: "Domaine modifie" });
       setEditDomaine(null);
       setAdresseIp("");
       loadDomaines();
@@ -71,7 +71,7 @@ export default function Domaines() {
   const handleSupprimer = async (id: number) => {
     try {
       await supprimerDomaine(id);
-      Toast.show({ type: "success", text1: "Supprimé", text2: "Domaine supprimé !" });
+      Toast.show({ type: "success", text1: "Supprime", text2: "Domaine supprime" });
       loadDomaines();
     } catch (e: any) {
       Toast.show({ type: "error", text1: "Erreur", text2: e.message });
@@ -92,10 +92,10 @@ export default function Domaines() {
 
   const dnsActions = [
     { label: "Installer", color: "#3B82F6", onPress: () => handleDnsAction(installDnsmasq, "Installation") },
-    { label: "Démarrer", color: "#10B981", onPress: () => handleDnsAction(startDnsmasq, "Démarrage") },
-    { label: "Arrêter", color: "#EF4444", onPress: () => handleDnsAction(stopDnsmasq, "Arrêt") },
-    { label: "Redémarrer", color: "#F59E0B", onPress: () => handleDnsAction(restartDnsmasq, "Redémarrage") },
-    { label: "Désinstaller", color: "#6B7280", onPress: () => handleDnsAction(uninstallDnsmasq, "Désinstallation") },
+    { label: "Demarrer", color: "#10B981", onPress: () => handleDnsAction(startDnsmasq, "Demarrage") },
+    { label: "Arreter", color: "#EF4444", onPress: () => handleDnsAction(stopDnsmasq, "Arret") },
+    { label: "Redemarrer", color: "#F59E0B", onPress: () => handleDnsAction(restartDnsmasq, "Redemarrage") },
+    { label: "Desinstaller", color: "#6B7280", onPress: () => handleDnsAction(uninstallDnsmasq, "Desinstallation") },
   ];
 
   if (loading) return (
@@ -106,33 +106,27 @@ export default function Domaines() {
 
   return (
     <View className="flex-1 bg-gray-900">
-      {/* Header */}
-      <View className="px-5 pt-6 pb-4">
-        <Text className="text-white text-2xl font-bold">DNS & Domaines</Text>
-        <Text className="text-gray-400 text-sm mt-1">
-          Gérez vos domaines et le service Dnsmasq.
-        </Text>
+      {/* En-tete fixe */}
+      <View className="px-6 pt-12 pb-6 bg-gray-900 border-b border-gray-800">
+        <Text className="text-white text-3xl font-bold tracking-tight">Reseau</Text>
+        <Text className="text-gray-500 text-sm mt-1">Gestion Dnsmasq et Domaines</Text>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Contrôles Dnsmasq */}
-        <DnsmasqControls loading={dnsLoading} actions={dnsActions} />
+      <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+        {/* Section des controles du service */}
+        <View className="mt-4">
+          <DnsmasqControls loading={dnsLoading} actions={dnsActions} />
+        </View>
 
-        {/* Liste des domaines */}
-        <View className="px-5">
-          <View className="flex-row items-center justify-between mb-3">
-            <Text className="text-white font-bold text-lg">Liste des Domaines</Text>
-            <TouchableOpacity
-              onPress={() => setShowForm(true)}
-              className="bg-blue-600 py-2 px-4 rounded-xl"
-            >
-              <Text className="text-white font-bold text-sm">+ Ajouter</Text>
-            </TouchableOpacity>
-          </View>
+        {/* Section de la liste des domaines */}
+        <View className="px-6 pb-32">
+          <Text className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-4">
+            Liste des domaines ({domaines.length})
+          </Text>
 
           {domaines.length === 0 ? (
-            <View className="items-center py-10">
-              <Text className="text-gray-500">Aucun domaine trouvé</Text>
+            <View className="items-center py-12 bg-gray-800/30 rounded-3xl border border-dashed border-gray-700">
+              <Text className="text-gray-600">Aucun domaine configure</Text>
             </View>
           ) : (
             domaines.map((domaine) => (
@@ -147,7 +141,16 @@ export default function Domaines() {
         </View>
       </ScrollView>
 
-      {/* Form Ajouter */}
+      {/* Bouton Flottant (FAB) pour ajouter */}
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() => setShowForm(true)}
+        className="absolute bottom-8 right-6 bg-blue-600 w-16 h-16 rounded-full items-center justify-center shadow-xl shadow-blue-500/40"
+      >
+        <Text className="text-white text-3xl font-light">+</Text>
+      </TouchableOpacity>
+
+      {/* Modales de formulaire */}
       <DomaineForm
         visible={showForm}
         nom={nom}
@@ -160,7 +163,6 @@ export default function Domaines() {
         onCancel={() => { setShowForm(false); setNom(""); setAdresseIp(""); }}
       />
 
-      {/* Form Modifier */}
       <DomaineForm
         visible={editDomaine !== null}
         nom={editDomaine?.nom ?? ""}

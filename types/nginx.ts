@@ -14,3 +14,4 @@ export type ConfigurationNginx = {
   logOutput: string;
   wanUrl: string | null;
 };
+

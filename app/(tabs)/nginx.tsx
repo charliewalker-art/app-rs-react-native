@@ -5,7 +5,7 @@ import { GestionNginx } from "@/types/nginx";
 import { Domaine } from "@/types/domaine";
 import {
   installNginx, uninstallNginx, startNginx, stopNginx,
-  restartNginx, configurerNginxDomaine
+  restartNginx, configurerNginxDomaine, uploadSite
 } from "@/services/nginxService";
 import { getDomaines } from "@/services/domaineService";
 import NginxControls from "@/components/nginx/NginxControls";
@@ -16,6 +16,7 @@ export default function Nginx() {
   const [domaines, setDomaines] = useState<Domaine[]>([]);
   const [showConfigForm, setShowConfigForm] = useState(false);
   const [selectedDomaine, setSelectedDomaine] = useState("");
+  const [selectedFichier, setSelectedFichier] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
   const [historique, setHistorique] = useState<GestionNginx[]>([]);
 
@@ -50,8 +51,23 @@ export default function Nginx() {
       });
       setShowConfigForm(false);
       setSelectedDomaine("");
+      setSelectedFichier(null);
     } catch (e: any) {
       Toast.show({ type: "error", text1: "Erreur", text2: e.message });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedDomaine || !selectedFichier) return;
+    setSubmitting(true);
+    try {
+      const result = await uploadSite(selectedDomaine, selectedFichier);
+      Toast.show({ type: "success", text1: "Upload réussi !", text2: result.statut });
+      setSelectedFichier(null);
+    } catch (e: any) {
+      Toast.show({ type: "error", text1: "Erreur upload", text2: e.message });
     } finally {
       setSubmitting(false);
     }
@@ -85,7 +101,7 @@ export default function Nginx() {
             onPress={() => setShowConfigForm(true)}
             className="bg-indigo-600 py-3 rounded-xl items-center"
           >
-            <Text className="text-white font-bold">⚙️ Configurer un domaine</Text>
+            <Text className="text-white font-bold">⚙️ Gérer un domaine</Text>
           </TouchableOpacity>
         </View>
 
@@ -96,8 +112,14 @@ export default function Nginx() {
             {historique.map((item, index) => (
               <View key={index} className="bg-gray-800 rounded-xl p-3 mb-2 border border-gray-700">
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-white font-semibold text-sm">{item.action?.toUpperCase()}</Text>
-                  <View className={`px-2 py-1 rounded-full ${item.statut.includes("REUSSI") || item.statut.includes("DONE") ? "bg-green-500" : "bg-red-500"}`}>
+                  <Text className="text-white font-semibold text-sm">
+                    {item.action?.toUpperCase()}
+                  </Text>
+                  <View className={`px-2 py-1 rounded-full ${
+                    item.statut.includes("REUSSI") || item.statut.includes("DONE")
+                      ? "bg-green-500"
+                      : "bg-red-500"
+                  }`}>
                     <Text className="text-white text-xs font-bold">{item.statut}</Text>
                   </View>
                 </View>
@@ -112,10 +134,17 @@ export default function Nginx() {
         visible={showConfigForm}
         domaines={domaines}
         selectedDomaine={selectedDomaine}
+        selectedFichier={selectedFichier}
         submitting={submitting}
         onSelect={setSelectedDomaine}
-        onSubmit={handleConfigurer}
-        onCancel={() => { setShowConfigForm(false); setSelectedDomaine(""); }}
+        onFichierPicked={setSelectedFichier}
+        onSubmitConfig={handleConfigurer}
+        onSubmitUpload={handleUpload}
+        onCancel={() => {
+          setShowConfigForm(false);
+          setSelectedDomaine("");
+          setSelectedFichier(null);
+        }}
       />
     </View>
   );
