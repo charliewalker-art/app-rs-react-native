@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 type Action = {
   label: string;
   color: string;
-  icon: string;
   onPress: () => void;
 };
 
@@ -15,7 +14,7 @@ type Props = {
 export default function NginxControls({ loading, actions }: Props) {
   return (
     <View className="px-5 mb-5">
-      <Text className="text-white font-bold text-lg mb-3">Contrôles Nginx</Text>
+      <Text className="text-white font-bold text-lg mb-3">Controles Serveur</Text>
       <View className="flex-row flex-wrap gap-2">
         {actions.map((action) => (
           <TouchableOpacity
@@ -29,7 +28,7 @@ export default function NginxControls({ loading, actions }: Props) {
               <ActivityIndicator color="#fff" size="small" />
             ) : (
               <Text className="text-white font-bold text-sm">
-                {action.icon} {action.label}
+                {action.label}
               </Text>
             )}
           </TouchableOpacity>

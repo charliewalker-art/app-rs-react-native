@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState, useCallback } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import { GestionNginx } from "@/types/nginx";
 import { Domaine } from "@/types/domaine";
@@ -20,11 +21,20 @@ export default function Nginx() {
   const [submitting, setSubmitting] = useState(false);
   const [historique, setHistorique] = useState<GestionNginx[]>([]);
 
-  useEffect(() => {
-    getDomaines()
-      .then(setDomaines)
-      .catch((e) => Toast.show({ type: "error", text1: "Erreur", text2: e.message }));
-  }, []);
+  const fetchDomaines = async () => {
+    try {
+      const data = await getDomaines();
+      setDomaines(data);
+    } catch (e: any) {
+      Toast.show({ type: "error", text1: "Erreur", text2: e.message });
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchDomaines();
+    }, [])
+  );
 
   const handleNginxAction = async (action: () => Promise<GestionNginx>, label: string) => {
     setLoading(true);
@@ -39,87 +49,75 @@ export default function Nginx() {
     }
   };
 
-  const handleConfigurer = async () => {
+  // SEQUENCE CORRIGEE : Configuration PUIS Upload
+  const handleDeploy = async () => {
     if (!selectedDomaine) return;
     setSubmitting(true);
+
     try {
-      const result = await configurerNginxDomaine(selectedDomaine);
-      Toast.show({
-        type: result.statut === "CONFIGURATION_REUSSIE" ? "success" : "error",
-        text1: result.statut === "CONFIGURATION_REUSSIE" ? "Configuré !" : "Échec",
-        text2: result.wanUrl ?? result.statut,
-      });
+      // 1. Configurer d'abord (Creation des dossiers/conf sur le serveur)
+      const configResult = await configurerNginxDomaine(selectedDomaine);
+      
+      if (configResult.statut === "CONFIGURATION_REUSSIE") {
+        Toast.show({ type: "success", text1: "Configuration reussie", text2: selectedDomaine });
+
+        // 2. Upload ensuite seulement si la config a reussi et qu'un fichier est present
+        if (selectedFichier) {
+          const uploadResult = await uploadSite(selectedDomaine, selectedFichier);
+          Toast.show({ type: "success", text1: "Upload reussi", text2: uploadResult.statut });
+        }
+      } else {
+        Toast.show({ type: "error", text1: "Echec configuration", text2: configResult.statut });
+      }
+
       setShowConfigForm(false);
       setSelectedDomaine("");
       setSelectedFichier(null);
     } catch (e: any) {
-      Toast.show({ type: "error", text1: "Erreur", text2: e.message });
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleUpload = async () => {
-    if (!selectedDomaine || !selectedFichier) return;
-    setSubmitting(true);
-    try {
-      const result = await uploadSite(selectedDomaine, selectedFichier);
-      Toast.show({ type: "success", text1: "Upload réussi !", text2: result.statut });
-      setSelectedFichier(null);
-    } catch (e: any) {
-      Toast.show({ type: "error", text1: "Erreur upload", text2: e.message });
+      Toast.show({ type: "error", text1: "Erreur de deploiement", text2: e.message });
     } finally {
       setSubmitting(false);
     }
   };
 
   const nginxActions = [
-    { label: "Installer", icon: "📦", color: "#3B82F6", onPress: () => handleNginxAction(installNginx, "Installation") },
-    { label: "Démarrer", icon: "▶️", color: "#10B981", onPress: () => handleNginxAction(startNginx, "Démarrage") },
-    { label: "Arrêter", icon: "⏹️", color: "#EF4444", onPress: () => handleNginxAction(stopNginx, "Arrêt") },
-    { label: "Redémarrer", icon: "🔄", color: "#F59E0B", onPress: () => handleNginxAction(restartNginx, "Redémarrage") },
-    { label: "Désinstaller", icon: "🗑️", color: "#6B7280", onPress: () => handleNginxAction(uninstallNginx, "Désinstallation") },
+    { label: "Installer", color: "#3B82F6", onPress: () => handleNginxAction(installNginx, "Installation") },
+    { label: "Demarrer", color: "#10B981", onPress: () => handleNginxAction(startNginx, "Demarrage") },
+    { label: "Arreter", color: "#EF4444", onPress: () => handleNginxAction(stopNginx, "Arret") },
+    { label: "Redemarrer", color: "#F59E0B", onPress: () => handleNginxAction(restartNginx, "Redemarrage") },
+    { label: "Desinstaller", color: "#6B7280", onPress: () => handleNginxAction(uninstallNginx, "Desinstallation") },
   ];
 
   return (
     <View className="flex-1 bg-gray-900">
-      {/* Header */}
       <View className="px-5 pt-6 pb-4">
         <Text className="text-white text-2xl font-bold">Nginx</Text>
-        <Text className="text-gray-400 text-sm mt-1">
-          Gérez le serveur web Nginx et vos domaines.
-        </Text>
+        <Text className="text-gray-400 text-sm mt-1">Gerez le serveur web et vos domaines.</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Contrôles */}
         <NginxControls loading={loading} actions={nginxActions} />
 
-        {/* Bouton configurer domaine */}
         <View className="px-5 mb-5">
           <TouchableOpacity
-            onPress={() => setShowConfigForm(true)}
+            onPress={() => {
+              fetchDomaines();
+              setShowConfigForm(true);
+            }}
             className="bg-indigo-600 py-3 rounded-xl items-center"
           >
-            <Text className="text-white font-bold">⚙️ Gérer un domaine</Text>
+            <Text className="text-white font-bold">Gerer un domaine</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Historique */}
         {historique.length > 0 && (
           <View className="px-5">
             <Text className="text-white font-bold text-lg mb-3">Historique</Text>
             {historique.map((item, index) => (
               <View key={index} className="bg-gray-800 rounded-xl p-3 mb-2 border border-gray-700">
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-white font-semibold text-sm">
-                    {item.action?.toUpperCase()}
-                  </Text>
-                  <View className={`px-2 py-1 rounded-full ${
-                    item.statut.includes("REUSSI") || item.statut.includes("DONE")
-                      ? "bg-green-500"
-                      : "bg-red-500"
-                  }`}>
+                  <Text className="text-white font-semibold text-sm">{item.action?.toUpperCase()}</Text>
+                  <View className={`px-2 py-1 rounded-full ${item.statut.includes("REUSSI") ? "bg-green-500" : "bg-red-500"}`}>
                     <Text className="text-white text-xs font-bold">{item.statut}</Text>
                   </View>
                 </View>
@@ -138,8 +136,7 @@ export default function Nginx() {
         submitting={submitting}
         onSelect={setSelectedDomaine}
         onFichierPicked={setSelectedFichier}
-        onSubmitConfig={handleConfigurer}
-        onSubmitUpload={handleUpload}
+        onSubmit={handleDeploy}
         onCancel={() => {
           setShowConfigForm(false);
           setSelectedDomaine("");
