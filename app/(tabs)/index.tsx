@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import { useFocusEffect } from "expo-router";
 import { View, ScrollView, ActivityIndicator, RefreshControl } from "react-native";
 import Toast from "react-native-toast-message";
 import { Domaine } from "@/types/domaine";
@@ -11,8 +12,6 @@ import { restartNginx } from "@/services/nginxService";
 import { restartDnsmasq } from "@/services/dnsmasqService";
 import HeaderDashboard from "@/components/dashboard/HeaderDashboard";
 import ServiceStatusCard from "@/components/dashboard/ServiceStatusCard";
-import DomainsList from "@/components/dashboard/DomainsList";
-import CertificatsList from "@/components/dashboard/CertificatsList";
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -41,7 +40,11 @@ export default function Dashboard() {
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -85,14 +88,12 @@ export default function Dashboard() {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#fff" />
       }
     >
-      {/* Header + Stats */}
       <HeaderDashboard
         nbDomaines={domaines.length}
         nbCertificats={certificats.length}
         nbAutorites={autorites.length}
       />
 
-      {/* Services */}
       <View className="flex-row justify-between px-5 mb-5">
         <ServiceStatusCard
           title="Nginx"
@@ -107,12 +108,6 @@ export default function Dashboard() {
           restarting={restartingDns}
         />
       </View>
-
-      {/* Domaines récents */}
-      <DomainsList domaines={domaines} />
-
-      {/* Certificats récents */}
-      <CertificatsList certificats={certificats} />
     </ScrollView>
   );
 }
