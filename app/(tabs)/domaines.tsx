@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
+import { useCallback } from "react";
+import { useFocusEffect } from "expo-router";
 import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView } from "react-native";
 import Toast from "react-native-toast-message";
 import { Domaine } from "@/types/domaine";
@@ -30,7 +32,12 @@ export default function Domaines() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { loadDomaines(); }, []);
+  // Recharge à chaque fois qu'on revient sur la page
+  useFocusEffect(
+    useCallback(() => {
+      loadDomaines();
+    }, [])
+  );
 
   const handleAjouter = async () => {
     if (!nom || !adresseIp) {
@@ -106,19 +113,16 @@ export default function Domaines() {
 
   return (
     <View className="flex-1 bg-gray-900">
-      {/* En-tete fixe */}
       <View className="px-6 pt-12 pb-6 bg-gray-900 border-b border-gray-800">
         <Text className="text-white text-3xl font-bold tracking-tight">Reseau</Text>
         <Text className="text-gray-500 text-sm mt-1">Gestion Dnsmasq et Domaines</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-        {/* Section des controles du service */}
         <View className="mt-4">
           <DnsmasqControls loading={dnsLoading} actions={dnsActions} />
         </View>
 
-        {/* Section de la liste des domaines */}
         <View className="px-6 pb-32">
           <Text className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-4">
             Liste des domaines ({domaines.length})
@@ -133,7 +137,7 @@ export default function Domaines() {
               <DomaineCard
                 key={domaine.id}
                 domaine={domaine}
-                onModifier={(d) => { setEditDomaine(d); setAdresseIp(d.adresseIp); }}
+              
                 onSupprimer={handleSupprimer}
               />
             ))
@@ -141,7 +145,6 @@ export default function Domaines() {
         </View>
       </ScrollView>
 
-      {/* Bouton Flottant (FAB) pour ajouter */}
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={() => setShowForm(true)}
@@ -150,7 +153,6 @@ export default function Domaines() {
         <Text className="text-white text-3xl font-light">+</Text>
       </TouchableOpacity>
 
-      {/* Modales de formulaire */}
       <DomaineForm
         visible={showForm}
         nom={nom}
