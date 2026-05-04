@@ -112,6 +112,7 @@ export default function Domaines() {
   );
 
   return (
+    
     <View className="flex-1 bg-gray-900">
       <View className="px-6 pt-12 pb-6 bg-gray-900 border-b border-gray-800">
         <Text className="text-gray-500 text-sm mt-1">Gestion Dnsmasq et Domaines</Text>
