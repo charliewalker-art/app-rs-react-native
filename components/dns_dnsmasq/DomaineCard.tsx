@@ -12,7 +12,7 @@ export default function DomaineCard({ domaine, onSupprimer }: Props) {
     <View className="bg-gray-800 rounded-2xl p-4 mb-3 border border-gray-700">
       <View className="flex-row items-center justify-between mb-2">
         <View className="flex-row items-center">
-          <Text className="text-white font-bold text-base mr-2">🌐 {domaine.nom}</Text>
+          <Text className="text-white font-bold text-base mr-2"> {domaine.nom}</Text>
           <View className="bg-blue-600 px-2 py-0.5 rounded-full">
             <Text className="text-white text-[10px] font-bold">ACTIF</Text>
           </View>

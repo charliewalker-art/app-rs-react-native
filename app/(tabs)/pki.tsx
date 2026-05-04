@@ -143,7 +143,7 @@
       <View className="flex-1 bg-gray-900">
         {/* Header */}
         <View className="px-5 pt-6 pb-4">
-          <Text className="text-white text-2xl font-bold">PKI Management</Text>
+          <Text className="text-white text-2xl font-bold">Autorité Centrale</Text>
           <Text className="text-gray-400 text-sm mt-1">
             Gérez vos autorités de certification et certificats.
           </Text>

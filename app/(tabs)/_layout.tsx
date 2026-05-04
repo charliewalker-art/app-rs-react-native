@@ -27,7 +27,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Dashboard",
+          title: "tableau de bord.",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="grid-outline" size={size} color={color} />
           ),
@@ -54,7 +54,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="pki"
         options={{
-          title: "PKI",
+          title: "Autorité ",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="shield-checkmark-outline" size={size} color={color} />
           ),
