@@ -98,14 +98,13 @@ export default function Dashboard() {
         <ServiceStatusCard
           title="Nginx"
           type="nginx"
-          onRestart={handleRestartNginx}
-          restarting={restartingNginx}
+         
+        
         />
         <ServiceStatusCard
           title="DNS"
           type="dns"
-          onRestart={handleRestartDns}
-          restarting={restartingDns}
+          
         />
       </View>
     </ScrollView>

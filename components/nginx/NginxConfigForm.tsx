@@ -42,7 +42,7 @@ export default function NginxConfigForm({
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <View className="flex-1 bg-black/60 justify-end">
           <View className="bg-gray-900 rounded-t-3xl p-6 max-h-[85%]">
-            <Text className="text-white text-xl font-bold mb-2">Gerer un domaine</Text>
+            <Text className="text-white text-xl font-bold mb-2">Gérer un domaine</Text>
             <Text className="text-gray-400 text-sm mb-5">Selectionnez un domaine pour configurer Nginx et uploader votre site.</Text>
 
             <ScrollView showsVerticalScrollIndicator={false}>
