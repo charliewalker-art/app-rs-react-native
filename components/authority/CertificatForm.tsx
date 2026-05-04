@@ -23,16 +23,18 @@ type Props = {
 
 export default function CertificatForm({ visible, form, submitting, authorities, onChange, onSubmit, onCancel }: Props) {
   return (
-    <Modal visible={visible} animationType="slide" transparent>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <View className="flex-1 bg-black/60 justify-end">
+    <Modal visible={visible} animationType="slide" transparent statusBarTranslucent>
+      <View className="flex-1 bg-black/60 justify-end">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        >
           <View className="bg-gray-900 rounded-t-3xl p-6 max-h-[90%]">
             <Text className="text-white text-xl font-bold mb-5">Nouveau certificat</Text>
-            <ScrollView showsVerticalScrollIndicator={false}>
-
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
               {/* Nom de domaine */}
               <View className="mb-4">
                 <Text className="text-gray-400 text-xs mb-1">Nom de domaine *</Text>
@@ -117,8 +119,8 @@ export default function CertificatForm({ visible, form, submitting, authorities,
               </View>
             </ScrollView>
           </View>
-        </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
